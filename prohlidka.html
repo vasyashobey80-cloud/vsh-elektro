@@ -24,9 +24,9 @@
   .r{ display:flex; align-items:center; gap:10px; padding:10px 11px; background:#1b1e25;
     border:1px solid #262b34; border-radius:12px; }
   .r-bar{ width:3px; align-self:stretch; border-radius:2px; background:#3a3f4a; }
-  .r-m{ flex:1; min-width:0; }
-  .r-n{ font-size:11.5px; font-weight:700; }
-  .r-u{ font-size:8.5px; color:#75757c; font-family:var(--mono); margin-top:1px; }
+  .r-m{ flex:1; min-width:0; display:block; }
+  .r-n{ display:block; font-size:11.5px; font-weight:700; line-height:1.25; }
+  .r-u{ display:block; font-size:8.5px; color:#75757c; font-family:var(--mono); margin-top:2px; }
   .r-q{ font-family:var(--mono); font-size:12px; font-weight:700; }
   .r-q small{ font-size:8px; color:#75757c; }
   .r.out .r-bar{ background:#ff5a4f; } .r.out .r-u{ color:#ff5a4f; }
@@ -48,9 +48,9 @@
     border-radius:12px; padding:10px 11px; }
   .t-ch{ width:16px; height:16px; border-radius:5px; border:1.6px solid #3a3f4a; flex:0 0 auto; margin-top:1px; }
   .t.done .t-ch{ background:#3ddc6b; border-color:transparent; }
-  .t-t{ font-size:11px; font-weight:700; }
+  .t-t{ display:block; font-size:11px; font-weight:700; line-height:1.3; }
   .t.done .t-t{ color:#75757c; text-decoration:line-through; }
-  .t-s{ font-size:8.5px; color:#75757c; margin-top:2px; font-family:var(--mono); }
+  .t-s{ display:block; font-size:8.5px; color:#75757c; margin-top:3px; font-family:var(--mono); }
   .t-p{ font-size:7px; font-family:var(--mono); letter-spacing:.1em; text-transform:uppercase;
     padding:2px 7px; border-radius:99px; border:1px solid #3a3f4a; color:#9096a2; align-self:center; }
   .t-p.hi{ color:#ff5a4f; border-color:rgba(255,90,79,.5); }
@@ -230,8 +230,8 @@
         <div class="scr">
           <div class="s-top"><div class="s-obj">Bytový dům Kaštanová ⌄</div><div class="s-h">Úkoly</div></div>
           <div class="s-body s-flex">
-            <div class="t"><span class="t-ch"></span><span class="r-m"><span class="t-t">Osadit rozvaděč RS2</span><span class="t-s">Petr K. · do 18. 3.</span></span><span class="t-p hi">Vysoká</span></div>
-            <div class="t"><span class="t-ch"></span><span class="r-m"><span class="t-t">Doměřit okruh světel v 1.NP</span><span class="t-s">Martin D. · do 19. 3.</span></span><span class="t-p">Běžná</span></div>
+            <div class="t"><span class="t-ch"></span><span class="r-m"><span class="t-t">Osadit rozvaděč RS2</span><span class="t-s">do 18. 3.</span></span><span class="t-p hi">Vysoká</span></div>
+            <div class="t"><span class="t-ch"></span><span class="r-m"><span class="t-t">Doměřit okruh světel v 1.NP</span><span class="t-s">do 19. 3.</span></span><span class="t-p">Běžná</span></div>
             <div class="t"><span class="t-ch"></span><span class="r-m"><span class="t-t">Zásuvky u kuchyňské linky</span><span class="t-s">z výkresu · E1.04-03</span></span><span class="t-p">Běžná</span></div>
             <div class="t done"><span class="t-ch"></span><span class="r-m"><span class="t-t">Protáhnout chráničky do 2.NP</span><span class="t-s">hotovo 14. 3.</span></span></div>
           </div>
@@ -259,10 +259,10 @@
         <div class="scr">
           <div class="s-top"><div class="s-h">Chat</div></div>
           <div class="s-body s-flex" style="justify-content:flex-end;padding-bottom:10px">
-            <div class="ch them"><div class="ch-w">Petr Kučera</div>V 1.NP chybí krabice, ráno je dovezu.</div>
+            <div class="ch them"><div class="ch-w">Kolega z party</div>V 1.NP chybí krabice, ráno je dovezu.</div>
             <div class="ch me">Dobře, zítra to dotáhneme.</div>
             <div class="ch me"><div class="ch-f">📄 1NP silnoproud rev.B.pdf</div>Nová revize od projektanta</div>
-            <div class="ch them"><div class="ch-w">Martin Dvořák</div>Vidím rozdíl u vstupu, projedu to.</div>
+            <div class="ch them"><div class="ch-w">Kolega z party</div>Vidím rozdíl u vstupu, projedu to.</div>
           </div>
           <div class="s-tabs"><span class="tb"><i></i>Deník</span><span class="tb"><i></i>Sklad</span>
             <span class="tb"><i></i>Úkoly</span><span class="tb"><i></i>Výkresy</span><span class="tb"><i></i>Lidé</span></div>
