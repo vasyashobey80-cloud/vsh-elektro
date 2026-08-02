@@ -3,214 +3,235 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>VSH Elektro — deník, sklad a výkresy pro partu na stavbě</title>
-<meta name="description" content="Stavební deník, sklad materiálu, úkoly a výkresy pro montážní party. Funguje i bez signálu. Podpis prstem, export do PDF a Excelu." />
-<meta property="og:title" content="VSH Elektro — stavba v telefonu" />
+<title>VSH Elektro — stavební deník, sklad a výkresy pro partu</title>
+<meta name="description" content="Deník, sklad materiálu, úkoly a výkresy pro montážní party. Zapíšeš to na place, ne večer doma. Funguje i bez signálu." />
+<meta property="og:title" content="VSH Elektro — zapíšeš to na place, ne večer doma" />
 <meta property="og:description" content="Deník, sklad, úkoly a výkresy pro celou partu. I bez signálu." />
-<meta name="theme-color" content="#101216" />
+<meta name="theme-color" content="#0e1014" />
 <style>
   :root{
-    --bg:#101216; --bg2:#15181e; --panel:#191d24; --line:#262b34; --line-soft:#1e222a;
-    --ink:#eef0f4; --mut:#a3a09a; --dim:#75757c;
-    --amber:#f8b226; --amber-hi:#ffcf57; --cyan:#4cc9f0;
-    --ok:#34c759; --bad:#ff453a;
+    --bg:#0e1014; --bg2:#13161c; --panel:#171b22; --panel2:#1c212a;
+    --line:#242932; --line2:#1c2029;
+    --ink:#f0f2f6; --mut:#a5a29b; --dim:#6f7178;
+    --amber:#f8b226; --amber-hi:#ffd166; --cyan:#4cc9f0;
     --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
     --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-    --maxw:1080px;
+    --w:1060px;
   }
   @media (prefers-color-scheme: light){
-    :root{
-      --bg:#eceae4; --bg2:#f5f4f0; --panel:#fff; --line:#d9d6cd; --line-soft:#e4e1d9;
-      --ink:#14161b; --mut:#5d5a54; --dim:#8a8780; --amber:#b47a00; --amber-hi:#946200; --cyan:#0a7ea4;
-    }
+    :root{ --bg:#eae8e2; --bg2:#f3f2ee; --panel:#fff; --panel2:#f7f6f3;
+      --line:#dbd8cf; --line2:#e6e3db; --ink:#12151a; --mut:#585550; --dim:#87847d;
+      --amber:#a86f00; --amber-hi:#8a5b00; --cyan:#0a7ea4; }
   }
-  :root[data-theme="dark"]{
-    --bg:#101216; --bg2:#15181e; --panel:#191d24; --line:#262b34; --line-soft:#1e222a;
-    --ink:#eef0f4; --mut:#a3a09a; --dim:#75757c; --amber:#f8b226; --amber-hi:#ffcf57; --cyan:#4cc9f0;
-  }
-  :root[data-theme="light"]{
-    --bg:#eceae4; --bg2:#f5f4f0; --panel:#fff; --line:#d9d6cd; --line-soft:#e4e1d9;
-    --ink:#14161b; --mut:#5d5a54; --dim:#8a8780; --amber:#b47a00; --amber-hi:#946200; --cyan:#0a7ea4;
-  }
+  :root[data-theme="dark"]{ --bg:#0e1014; --bg2:#13161c; --panel:#171b22; --panel2:#1c212a;
+    --line:#242932; --line2:#1c2029; --ink:#f0f2f6; --mut:#a5a29b; --dim:#6f7178;
+    --amber:#f8b226; --amber-hi:#ffd166; --cyan:#4cc9f0; }
+  :root[data-theme="light"]{ --bg:#eae8e2; --bg2:#f3f2ee; --panel:#fff; --panel2:#f7f6f3;
+    --line:#dbd8cf; --line2:#e6e3db; --ink:#12151a; --mut:#585550; --dim:#87847d;
+    --amber:#a86f00; --amber-hi:#8a5b00; --cyan:#0a7ea4; }
 
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans);
-    -webkit-font-smoothing:antialiased; line-height:1.55; overflow-x:hidden; }
-  .wrap{ max-width:var(--maxw); margin:0 auto; padding:0 22px; }
+    line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  .w{ max-width:var(--w); margin:0 auto; padding:0 22px; }
+  section{ padding:clamp(52px,8vw,104px) 0; }
 
-  /* technická síť na pozadí */
-  .grid-bg{ position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5;
-    background-image:
-      linear-gradient(to right, var(--line-soft) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--line-soft) 1px, transparent 1px);
-    background-size:64px 64px;
-    -webkit-mask-image:radial-gradient(120% 80% at 50% 0%, #000 25%, transparent 75%);
-    mask-image:radial-gradient(120% 80% at 50% 0%, #000 25%, transparent 75%); }
-  main, header, footer{ position:relative; z-index:1; }
+  .gridbg{ position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.55;
+    background-image:linear-gradient(to right,var(--line2) 1px,transparent 1px),
+      linear-gradient(to bottom,var(--line2) 1px,transparent 1px);
+    background-size:72px 72px;
+    -webkit-mask-image:radial-gradient(130% 70% at 50% 0%,#000 20%,transparent 72%);
+    mask-image:radial-gradient(130% 70% at 50% 0%,#000 20%,transparent 72%); }
+  header,main,footer{ position:relative; z-index:1; }
 
-  /* ---- hlavička ---- */
-  header{ padding:22px 0; }
-  .bar{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
-  .logo{ display:flex; align-items:center; gap:11px; }
-  .logo-i{ width:38px; height:38px; border-radius:11px; background:#15171c; flex:0 0 auto;
-    display:flex; align-items:center; justify-content:center; box-shadow:0 3px 14px rgba(0,0,0,.35); }
-  .logo-i svg{ width:22px; height:22px; color:var(--amber); }
-  .logo-n{ font-size:16px; font-weight:800; letter-spacing:-.01em; line-height:1; }
-  .logo-s{ font-family:var(--mono); font-size:9.5px; letter-spacing:.28em; color:var(--dim); text-transform:uppercase; }
-  .nav{ display:flex; gap:22px; align-items:center; }
-  .nav a{ color:var(--mut); text-decoration:none; font-size:14px; font-weight:600; }
-  .nav a:hover{ color:var(--ink); }
-  @media (max-width:720px){ .nav{ display:none; } }
-
-  /* ---- typografie ---- */
+  /* --- typo --- */
   .eyebrow{ display:flex; align-items:center; gap:12px; font-family:var(--mono);
-    font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--amber);
-    margin:0 0 18px; }
+    font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; color:var(--amber);
+    margin:0 0 18px; font-weight:600; }
   .eyebrow::after{ content:""; flex:1; height:1px; background:var(--line); }
-  h1{ font-size:clamp(34px,6.4vw,62px); line-height:1.03; letter-spacing:-.035em;
-    font-weight:850; margin:0 0 20px; text-wrap:balance; }
-  h2{ font-size:clamp(25px,3.6vw,38px); line-height:1.1; letter-spacing:-.03em;
-    font-weight:850; margin:0 0 14px; text-wrap:balance; }
-  h3{ font-size:17px; font-weight:800; letter-spacing:-.01em; margin:0 0 6px; }
-  .lede{ font-size:clamp(16px,2vw,18.5px); color:var(--mut); margin:0 0 30px; max-width:54ch; }
+  h1{ font-size:clamp(36px,6.8vw,66px); line-height:1.01; letter-spacing:-.04em;
+    font-weight:860; margin:0 0 20px; text-wrap:balance; }
+  h2{ font-size:clamp(26px,3.9vw,40px); line-height:1.08; letter-spacing:-.032em;
+    font-weight:860; margin:0 0 14px; text-wrap:balance; }
+  h3{ font-size:17px; font-weight:800; letter-spacing:-.012em; margin:0 0 6px; }
+  .lede{ font-size:clamp(16px,2vw,18.5px); color:var(--mut); margin:0 0 30px; max-width:56ch; }
   p{ margin:0 0 14px; }
-  .amber{ color:var(--amber); }
 
-  /* ---- hero ---- */
-  .hero{ display:grid; grid-template-columns:1.08fr .92fr; gap:clamp(28px,5vw,60px);
-    align-items:center; padding:clamp(30px,6vw,70px) 0 clamp(40px,7vw,80px); }
-  @media (max-width:880px){ .hero{ grid-template-columns:1fr; } }
-  .cta-row{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+  /* --- header --- */
+  header{ padding:20px 0; }
+  .bar{ display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .logo{ display:flex; align-items:center; gap:11px; text-decoration:none; color:inherit; }
+  .logo-i{ width:38px; height:38px; border-radius:11px; background:#15171c; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 3px 14px rgba(0,0,0,.4); }
+  .logo-i svg{ width:22px; height:22px; color:#f8b226; }
+  .logo-n{ font-size:16px; font-weight:800; letter-spacing:-.015em; line-height:1.05; }
+  .logo-s{ font-family:var(--mono); font-size:9px; letter-spacing:.26em; color:var(--dim); text-transform:uppercase; }
+  nav{ display:flex; gap:24px; align-items:center; }
+  nav a{ color:var(--mut); text-decoration:none; font-size:14px; font-weight:600; }
+  nav a:hover{ color:var(--ink); }
+  @media (max-width:760px){ nav{ display:none; } }
+
+  /* --- buttons --- */
   .btn{ display:inline-flex; align-items:center; gap:9px; border:none; cursor:pointer;
     font-family:inherit; font-size:15.5px; font-weight:800; text-decoration:none;
-    padding:14px 24px; border-radius:13px; transition:transform .15s ease, filter .15s ease; }
+    padding:15px 26px; border-radius:13px; transition:transform .14s ease,filter .14s ease; }
   .btn:hover{ transform:translateY(-1px); filter:brightness(1.06); }
   .btn:focus-visible{ outline:2px solid var(--amber); outline-offset:3px; }
-  .btn-primary{ background:linear-gradient(140deg,var(--amber-hi),var(--amber)); color:#1a1205;
-    box-shadow:0 8px 26px rgba(248,178,38,.26); }
-  .btn-ghost{ background:transparent; color:var(--ink); border:1px solid var(--line); }
-  .note{ font-family:var(--mono); font-size:12px; color:var(--dim); margin-top:16px; }
+  .btn-1{ background:linear-gradient(140deg,var(--amber-hi),var(--amber)); color:#1a1205;
+    box-shadow:0 10px 30px rgba(248,178,38,.24); }
+  .btn-2{ background:transparent; color:var(--ink); border:1px solid var(--line); }
+  .cta{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+  .note{ font-family:var(--mono); font-size:11.5px; color:var(--dim); margin-top:16px; letter-spacing:.02em; }
 
-  /* ---- telefon s ukázkou ---- */
-  .phone{ justify-self:center; width:min(300px,84vw); aspect-ratio:9/19.2;
-    background:#15171c; border-radius:38px; padding:9px;
-    border:1px solid var(--line); box-shadow:0 30px 70px rgba(0,0,0,.45); }
-  .screen{ height:100%; background:#15171c; border-radius:30px; overflow:hidden;
+  /* --- hero --- */
+  .hero{ display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(26px,5vw,56px);
+    align-items:center; padding:clamp(26px,5vw,58px) 0 clamp(34px,6vw,64px); }
+  @media (max-width:900px){ .hero{ grid-template-columns:1fr; } }
+
+  .phone{ justify-self:center; width:min(292px,82vw); aspect-ratio:9/19.3;
+    background:#15171c; border-radius:38px; padding:9px; border:1px solid var(--line);
+    box-shadow:0 34px 80px rgba(0,0,0,.5); }
+  .scr{ height:100%; background:#15171c; border-radius:30px; overflow:hidden;
     display:flex; flex-direction:column; color:#eceef2; }
   .s-top{ padding:16px 15px 10px; }
-  .s-obj{ font-family:var(--mono); font-size:9px; letter-spacing:.18em; color:#f8b226; text-transform:uppercase; }
-  .s-h{ font-size:20px; font-weight:850; letter-spacing:-.02em; margin-top:2px; }
+  .s-obj{ font-family:var(--mono); font-size:8.5px; letter-spacing:.2em; color:#f8b226; text-transform:uppercase; }
+  .s-h{ font-size:20px; font-weight:860; letter-spacing:-.025em; margin-top:3px; }
   .s-body{ flex:1; padding:0 12px; display:flex; flex-direction:column; gap:9px; overflow:hidden; }
-  .card{ background:#1b1e25; border:1px solid #272b34; border-radius:14px; padding:11px 12px; }
-  .c-top{ display:flex; align-items:center; justify-content:space-between; }
-  .c-date{ font-family:var(--mono); font-size:14px; font-weight:800; color:#f8b226; }
-  .chip{ font-family:var(--mono); font-size:7.5px; letter-spacing:.12em; text-transform:uppercase;
-    padding:3px 8px; border-radius:99px; border:1px solid #3a3f4a; color:#9096a2; }
-  .chip.ok{ color:#34c759; border-color:rgba(52,199,89,.5); }
-  .c-time{ font-family:var(--mono); font-size:9.5px; color:#75757c; margin-top:1px; }
-  .c-li{ font-size:10.5px; margin-top:7px; display:flex; gap:6px; color:#d7d9de; }
-  .c-li i{ width:4px; height:4px; border-radius:50%; background:#f8b226; margin-top:6px; flex:0 0 auto; }
-  .c-wx{ font-family:var(--mono); font-size:9px; color:#75757c; margin-top:6px; }
+  .k{ background:#1b1e25; border:1px solid #262b34; border-radius:14px; padding:11px 12px; }
+  .k-top{ display:flex; align-items:flex-start; justify-content:space-between; }
+  .k-d{ font-family:var(--mono); font-size:13.5px; font-weight:800; color:#f8b226; }
+  .k-t{ font-family:var(--mono); font-size:9px; color:#75757c; margin-top:1px; }
+  .pill{ font-family:var(--mono); font-size:7px; letter-spacing:.13em; text-transform:uppercase;
+    padding:3px 8px; border-radius:99px; border:1px solid #3a3f4a; color:#9096a2; white-space:nowrap; }
+  .pill.ok{ color:#3ddc6b; border-color:rgba(61,220,107,.5); }
+  .k-li{ font-size:10.5px; margin-top:7px; display:flex; gap:6px; color:#d7d9de; }
+  .k-li i{ width:4px; height:4px; border-radius:50%; background:#f8b226; margin-top:6px; flex:0 0 auto; }
+  .k-wx{ font-family:var(--mono); font-size:8.5px; color:#75757c; margin-top:7px; }
   .avs{ display:flex; gap:4px; margin-top:8px; }
-  .av{ width:19px; height:19px; border-radius:50%; background:#272b34; color:#9096a2;
+  .av{ width:19px; height:19px; border-radius:50%; background:#262b34; color:#9096a2;
     font-size:7.5px; font-weight:800; display:flex; align-items:center; justify-content:center; }
   .av.on{ background:#f8b226; color:#15171c; }
   .mats{ display:flex; flex-wrap:wrap; gap:4px; margin-top:8px; }
-  .mat{ font-family:var(--mono); font-size:8px; padding:3px 7px; border-radius:99px;
-    border:1px solid #272b34; color:#9096a2; }
-  .mat b{ color:#ff453a; }
+  .mt{ font-family:var(--mono); font-size:7.5px; padding:3px 7px; border-radius:99px;
+    border:1px solid #262b34; color:#9096a2; }
+  .mt b{ color:#ff5a4f; }
   .s-tabs{ display:flex; justify-content:space-around; padding:10px 6px 16px;
     border-top:1px solid #22262e; margin-top:auto; }
-  .tab{ display:flex; flex-direction:column; align-items:center; gap:3px;
-    font-size:7.5px; color:#5d5f68; font-weight:700; }
-  .tab.on{ color:#f8b226; }
-  .tab i{ width:15px; height:15px; border:1.6px solid currentColor; border-radius:4px; display:block; }
+  .tb{ display:flex; flex-direction:column; align-items:center; gap:3px; font-size:7px;
+    color:#5d5f68; font-weight:700; }
+  .tb.on{ color:#f8b226; }
+  .tb i{ width:14px; height:14px; border:1.6px solid currentColor; border-radius:4px; }
 
-  /* ---- pásy a sekce ---- */
-  section{ padding:clamp(46px,7vw,86px) 0; }
-  .rule{ height:1px; background:var(--line); position:relative; }
-  .rule::before, .rule::after{ content:""; position:absolute; top:-4px; width:1px; height:9px; background:var(--line); }
-  .rule::before{ left:0; } .rule::after{ right:0; }
+  /* --- proof strip --- */
+  .proof{ border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--bg2); }
+  .proof-in{ display:grid; grid-template-columns:1.25fr 1fr; gap:clamp(22px,4vw,48px); align-items:center;
+    padding:clamp(26px,4vw,42px) 0; }
+  @media (max-width:800px){ .proof-in{ grid-template-columns:1fr; } }
+  .proof p{ margin:0; color:var(--mut); font-size:15.5px; }
+  .proof b{ color:var(--ink); }
+  .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .st-n{ font-family:var(--mono); font-size:clamp(21px,3.4vw,30px); font-weight:700;
+    letter-spacing:-.03em; color:var(--amber); font-variant-numeric:tabular-nums; line-height:1.1; }
+  .st-l{ font-size:11.5px; color:var(--dim); margin-top:3px; line-height:1.35; }
 
-  .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:14px; margin-top:34px; }
-  .feat{ background:var(--panel); border:1px solid var(--line); border-radius:17px; padding:22px 20px; }
-  .feat .ic{ width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center;
-    background:rgba(248,178,38,.12); color:var(--amber); margin-bottom:14px; }
-  .feat .ic svg{ width:20px; height:20px; }
-  .feat p{ color:var(--mut); font-size:14.5px; margin:0; }
+  /* --- problémy --- */
+  .pains{ display:grid; gap:12px; margin-top:32px; }
+  .pain{ display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start;
+    background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px 22px; }
+  .pain-q{ font-family:var(--mono); font-size:11px; color:var(--dim); padding-top:3px; }
+  .pain h3{ font-size:16.5px; margin-bottom:4px; }
+  .pain p{ margin:0; color:var(--mut); font-size:14.5px; }
+  .pain em{ font-style:normal; color:var(--amber); font-weight:700; }
 
-  /* offline pás */
+  /* --- kroky --- */
+  .steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:32px; counter-reset:s; }
+  @media (max-width:760px){ .steps{ grid-template-columns:1fr; } }
+  .step{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 20px; }
+  .step::before{ counter-increment:s; content:counter(s); font-family:var(--mono); font-size:12px;
+    font-weight:700; color:var(--amber); display:block; margin-bottom:12px; letter-spacing:.1em; }
+  .step p{ margin:0; color:var(--mut); font-size:14.5px; }
+
+  /* --- funkce --- */
+  .feats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:13px; margin-top:32px; }
+  .feat{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px 20px; }
+  .feat .ic{ width:36px; height:36px; border-radius:10px; display:flex; align-items:center;
+    justify-content:center; background:rgba(248,178,38,.11); color:var(--amber); margin-bottom:13px; }
+  .feat .ic svg{ width:19px; height:19px; }
+  .feat p{ margin:0; color:var(--mut); font-size:14.5px; }
+
+  /* --- offline --- */
   .band{ background:var(--bg2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-  .band-in{ display:grid; grid-template-columns:auto 1fr; gap:26px; align-items:center; }
-  @media (max-width:720px){ .band-in{ grid-template-columns:1fr; } }
-  .band-big{ font-family:var(--mono); font-size:clamp(44px,9vw,88px); font-weight:700;
-    letter-spacing:-.05em; color:var(--amber); line-height:.9; }
+  .band-in{ display:grid; grid-template-columns:auto 1fr; gap:30px; align-items:center; }
+  @media (max-width:760px){ .band-in{ grid-template-columns:1fr; } }
+  .band-n{ font-family:var(--mono); font-size:clamp(46px,9vw,92px); font-weight:700;
+    letter-spacing:-.055em; color:var(--amber); line-height:.86; }
+  .band-n span{ color:var(--dim); }
 
-  /* výkresy - ukázka porovnání */
-  .split{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(26px,4vw,52px); align-items:center; }
-  @media (max-width:820px){ .split{ grid-template-columns:1fr; } }
+  /* --- výkresy --- */
+  .split{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px,4vw,52px); align-items:center; }
+  @media (max-width:840px){ .split{ grid-template-columns:1fr; } }
   .plan{ position:relative; aspect-ratio:4/3; border-radius:16px; overflow:hidden;
     background:var(--panel); border:1px solid var(--line); }
   .plan svg{ position:absolute; inset:0; width:100%; height:100%; }
-  .legend{ position:absolute; left:12px; bottom:12px; display:flex; gap:12px;
-    background:rgba(16,18,24,.9); border:1px solid var(--line); border-radius:99px; padding:6px 12px; }
-  .legend span{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:#eef0f4; }
-  .legend i{ width:9px; height:9px; border-radius:2px; }
-  .list-check{ list-style:none; padding:0; margin:18px 0 0; }
-  .list-check li{ display:flex; gap:11px; align-items:flex-start; margin-bottom:11px;
-    font-size:15px; color:var(--mut); }
-  .list-check svg{ width:19px; height:19px; color:var(--amber); flex:0 0 auto; margin-top:1px; }
-  .list-check b{ color:var(--ink); font-weight:700; }
+  .lgd{ position:absolute; left:12px; bottom:12px; display:flex; gap:12px;
+    background:rgba(12,14,19,.92); border:1px solid var(--line); border-radius:99px; padding:6px 12px; }
+  .lgd span{ display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:#f0f2f6; }
+  .lgd i{ width:9px; height:9px; border-radius:2px; }
+  .ticks{ list-style:none; padding:0; margin:20px 0 0; }
+  .ticks li{ display:flex; gap:11px; align-items:flex-start; margin-bottom:11px; font-size:15px; color:var(--mut); }
+  .ticks svg{ width:18px; height:18px; color:var(--amber); flex:0 0 auto; margin-top:2px; }
+  .ticks b{ color:var(--ink); font-weight:700; }
 
-  /* srovnání "před / po" */
-  .vs{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:32px; }
-  @media (max-width:660px){ .vs{ grid-template-columns:1fr; } }
-  .vs-col{ border:1px solid var(--line); border-radius:17px; padding:22px 20px; background:var(--panel); }
-  .vs-col.now{ border-color:rgba(248,178,38,.45); }
-  .vs-h{ font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase;
-    color:var(--dim); margin-bottom:14px; }
-  .vs-col.now .vs-h{ color:var(--amber); }
-  .vs-col ul{ margin:0; padding-left:18px; color:var(--mut); font-size:14.5px; }
-  .vs-col li{ margin-bottom:8px; }
+  /* --- FAQ --- */
+  .faq{ margin-top:30px; border-top:1px solid var(--line); }
+  details{ border-bottom:1px solid var(--line); }
+  summary{ list-style:none; cursor:pointer; padding:19px 44px 19px 0; position:relative;
+    font-size:16.5px; font-weight:750; letter-spacing:-.012em; }
+  summary::-webkit-details-marker{ display:none; }
+  summary::after{ content:""; position:absolute; right:8px; top:50%; width:13px; height:13px;
+    margin-top:-6px; background:
+      linear-gradient(var(--amber),var(--amber)) center/13px 1.6px no-repeat,
+      linear-gradient(var(--amber),var(--amber)) center/1.6px 13px no-repeat;
+    transition:transform .2s ease; }
+  details[open] summary::after{ transform:rotate(90deg);
+    background:linear-gradient(var(--amber),var(--amber)) center/13px 1.6px no-repeat; }
+  details p{ color:var(--mut); font-size:15px; margin:0 0 19px; max-width:62ch; }
+  summary:focus-visible{ outline:2px solid var(--amber); outline-offset:3px; border-radius:6px; }
 
-  /* závěrečná výzva */
+  /* --- final --- */
   .final{ background:var(--panel); border:1px solid var(--line); border-radius:24px;
-    padding:clamp(30px,5vw,52px); text-align:center; }
+    padding:clamp(30px,5vw,54px); text-align:center; }
   .final .lede{ margin-left:auto; margin-right:auto; }
-  .final .cta-row{ justify-content:center; }
+  .final .cta{ justify-content:center; }
 
   footer{ border-top:1px solid var(--line); padding:30px 0 46px; color:var(--dim); font-size:13.5px; }
   .f-in{ display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between; align-items:center; }
   footer a{ color:var(--mut); text-decoration:none; }
   footer a:hover{ color:var(--amber); }
 
-  /* jemné odhalení při scrollu */
-  .rev{ opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease; }
+  .rev{ opacity:0; transform:translateY(14px); transition:opacity .55s ease,transform .55s ease; }
   .rev.in{ opacity:1; transform:none; }
-  @media (prefers-reduced-motion: reduce){
-    html{ scroll-behavior:auto; }
-    .rev{ opacity:1; transform:none; transition:none; }
-    .btn:hover{ transform:none; }
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; } .rev{ opacity:1; transform:none; transition:none; }
+    .btn:hover{ transform:none; } summary::after{ transition:none; }
   }
 </style>
 </head>
 <body>
-<div class="grid-bg" aria-hidden="true"></div>
+<div class="gridbg" aria-hidden="true"></div>
 
 <header>
-  <div class="wrap bar">
-    <div class="logo">
+  <div class="w bar">
+    <a class="logo" href="#">
       <span class="logo-i"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
-      <span>
-        <span class="logo-n">VSH Elektro</span><br />
-        <span class="logo-s">Stavba v telefonu</span>
-      </span>
-    </div>
-    <nav class="nav">
+      <span><span class="logo-n">VSH Elektro</span><br /><span class="logo-s">Stavba v telefonu</span></span>
+    </a>
+    <nav>
+      <a href="#problemy">Problémy</a>
       <a href="#funkce">Co to umí</a>
       <a href="#vykresy">Výkresy</a>
-      <a href="#offline">Bez signálu</a>
+      <a href="#faq">Otázky</a>
       <a href="#zkusit">Vyzkoušet</a>
     </nav>
   </div>
@@ -218,98 +239,146 @@
 
 <main>
   <!-- HERO -->
-  <div class="wrap hero">
+  <div class="w hero">
     <div>
       <p class="eyebrow">Pro montážní a stavební party</p>
-      <h1>Deník, sklad a výkresy.<br />Všechno v telefonu.</h1>
-      <p class="lede">Zapíšeš, co se dnes udělalo, kolik materiálu ušlo a kdo na stavbě byl.
-        Přiložíš fotku, šéf to podepíše prstem. Za minutu, přímo na place —
-        a když není signál, appka počká a odešle to sama.</p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href="#zkusit">Chci to vyzkoušet</a>
-        <a class="btn btn-ghost" href="#funkce">Co to umí</a>
+      <h1>Zapíšeš to na place.<br />Ne večer doma.</h1>
+      <p class="lede">Stavební deník, sklad materiálu, úkoly a výkresy pro celou partu.
+        Záznam za minutu přímo na stavbě — s fotkou, počasím i podpisem šéfa.
+        A když není signál, appka počká a odešle to sama.</p>
+      <div class="cta">
+        <a class="btn btn-1" href="#zkusit">Chci to vyzkoušet</a>
+        <a class="btn btn-2" href="#problemy">Proč vzniklo</a>
       </div>
       <p class="note">iPhone · připravujeme vydání v App Storu</p>
     </div>
 
-    <!-- živá ukázka aplikace -->
-    <div class="phone" role="img" aria-label="Ukázka obrazovky se stavebním deníkem">
-      <div class="screen">
+    <div class="phone" role="img" aria-label="Ukázka obrazovky stavebního deníku">
+      <div class="scr">
         <div class="s-top">
           <div class="s-obj">Akademie věd ⌄</div>
           <div class="s-h">Stavební deník</div>
         </div>
         <div class="s-body">
-          <div class="card">
-            <div class="c-top">
-              <div>
-                <div class="c-date">Čt 30. 7.</div>
-                <div class="c-time">07:00 — 18:00</div>
-              </div>
-              <span class="chip ok">Podepsáno</span>
+          <div class="k">
+            <div class="k-top">
+              <div><div class="k-d">Čt 30. 7.</div><div class="k-t">07:00 — 18:00</div></div>
+              <span class="pill ok">Podepsáno</span>
             </div>
-            <div class="c-li"><i></i>Natažení kabelů v 2.NP</div>
-            <div class="c-li"><i></i>Montáž datových zásuvek</div>
-            <div class="c-wx">☀ 24 °C, skoro jasno · 2.NP–4.NP</div>
+            <div class="k-li"><i></i>Natažení kabelů v 2.NP</div>
+            <div class="k-li"><i></i>Montáž datových zásuvek</div>
+            <div class="k-wx">☀ 24 °C, skoro jasno · 2.NP–4.NP</div>
             <div class="avs"><span class="av on">VS</span><span class="av">VD</span><span class="av">RO</span></div>
             <div class="mats">
-              <span class="mat">Kabel F/UTP 6A <b>−90 m</b></span>
-              <span class="mat">Chránička DN25 <b>−20 m</b></span>
+              <span class="mt">Kabel F/UTP 6A <b>−90 m</b></span>
+              <span class="mt">Chránička DN25 <b>−20 m</b></span>
             </div>
           </div>
-          <div class="card">
-            <div class="c-top">
-              <div>
-                <div class="c-date">St 29. 7.</div>
-                <div class="c-time">07:00 — 16:30</div>
-              </div>
-              <span class="chip">Čeká podpisu</span>
+          <div class="k">
+            <div class="k-top">
+              <div><div class="k-d">St 29. 7.</div><div class="k-t">07:00 — 16:30</div></div>
+              <span class="pill">Čeká podpisu</span>
             </div>
-            <div class="c-li"><i></i>Drážkování — 25 m</div>
+            <div class="k-li"><i></i>Drážkování — 25 m</div>
             <div class="avs"><span class="av on">VS</span><span class="av">IV</span></div>
           </div>
         </div>
         <div class="s-tabs">
-          <span class="tab on"><i></i>Deník</span>
-          <span class="tab"><i></i>Sklad</span>
-          <span class="tab"><i></i>Úkoly</span>
-          <span class="tab"><i></i>Výkresy</span>
-          <span class="tab"><i></i>Lidé</span>
+          <span class="tb on"><i></i>Deník</span><span class="tb"><i></i>Sklad</span>
+          <span class="tb"><i></i>Úkoly</span><span class="tb"><i></i>Výkresy</span>
+          <span class="tb"><i></i>Lidé</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="wrap"><div class="rule"></div></div>
+  <!-- PROOF -->
+  <div class="proof">
+    <div class="w proof-in">
+      <p><b>Nevymysleli jsme to v kanceláři.</b> Appku píšeme pro vlastní partu na
+        zakázce v Praze — každá funkce vznikla proto, že něco na stavbě zlobilo.
+        Co se neosvědčí do týdne, letí ven.</p>
+      <div class="stats">
+        <div><div class="st-n">21</div><div class="st-l">záznamů deníku<br />za dva měsíce</div></div>
+        <div><div class="st-n">8 440</div><div class="st-l">metrů kabelu<br />v evidenci</div></div>
+        <div><div class="st-n">7</div><div class="st-l">lidí v partě<br />na jedné stavbě</div></div>
+      </div>
+    </div>
+  </div>
 
-  <!-- PROBLÉM -->
-  <section>
-    <div class="wrap rev">
-      <p class="eyebrow">Jak to chodí dneska</p>
-      <h2>Papír v kapse, materiál po paměti,<br />výkresy v deseti verzích.</h2>
-      <p class="lede">Večer doma přepisuješ poznámky do počítače. Nikdo neví, kolik zbylo kabelu.
-        Změna od projektanta doletí do WhatsAppu a půlka party staví podle staré verze.</p>
+  <!-- PROBLÉMY -->
+  <section id="problemy">
+    <div class="w rev">
+      <p class="eyebrow">Co to řeší</p>
+      <h2>Tohle zná každý, kdo dělá na stavbě</h2>
+      <p class="lede">Pět věcí, které stojí čas a peníze — a přitom se nedají vyřešit
+        další skupinou na WhatsAppu.</p>
 
-      <div class="vs">
-        <div class="vs-col">
-          <div class="vs-h">Bez appky</div>
-          <ul>
-            <li>Deník se dopisuje z hlavy o víkendu</li>
-            <li>Sklad „asi ještě něco máme“</li>
-            <li>Fotky roztroušené po telefonech</li>
-            <li>Kdo kdy byl na stavbě? Nikdo neví</li>
-            <li>Výkres v mailu, změna v chatu</li>
-          </ul>
+      <div class="pains">
+        <div class="pain">
+          <span class="pain-q">01</span>
+          <div>
+            <h3>„Deník dopisuju v neděli z hlavy.“</h3>
+            <p>Po čtrnácti dnech si nikdo nevzpomene, co se dělalo ve středu.
+              <em>Záznam vzniká na place za minutu</em>, dokud to máš v hlavě.</p>
+          </div>
         </div>
-        <div class="vs-col now">
-          <div class="vs-h">S VSH Elektro</div>
-          <ul>
-            <li>Záznam vzniká na place za minutu</li>
-            <li>Materiál se odečte, když se deník podá</li>
-            <li>Fotky rovnou u záznamu a úkolu</li>
-            <li>Docházka i podpis šéfa v jednom</li>
-            <li>Výkres, změny i značky na jednom místě</li>
-          </ul>
+        <div class="pain">
+          <span class="pain-q">02</span>
+          <div>
+            <h3>„Kolik zbylo kabelu? Asi něco jo.“</h3>
+            <p>Objednává se zbytečně, nebo dojde uprostřed práce.
+              <em>Materiál se odečte, když se deník podá</em> — sklad sedí sám od sebe.</p>
+          </div>
+        </div>
+        <div class="pain">
+          <span class="pain-q">03</span>
+          <div>
+            <h3>„Investor chce doložit, kdo tam kdy byl.“</h3>
+            <p>Docházka po papírech a v hlavě je k nedoložení.
+              <em>Deník s podpisem a exportem do PDF</em> je doklad, ne poznámka.</p>
+          </div>
+        </div>
+        <div class="pain">
+          <span class="pain-q">04</span>
+          <div>
+            <h3>„Projektant poslal změnu do chatu.“</h3>
+            <p>Půlka party pak staví podle staré verze.
+              <em>Nahraješ novou revizi a appka zvýrazní, co se změnilo.</em></p>
+          </div>
+        </div>
+        <div class="pain">
+          <span class="pain-q">05</span>
+          <div>
+            <h3>„Fotky mám v telefonu, kluci ve svých.“</h3>
+            <p>Když je potřeba doložit provedení, hledá se v deseti zařízeních.
+              <em>Fotka patří k záznamu a k úkolu</em>, ne do galerie.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JAK TO CHODÍ -->
+  <section>
+    <div class="w rev">
+      <p class="eyebrow">Jak to chodí</p>
+      <h2>Tři kroky, žádné školení</h2>
+      <div class="steps">
+        <div class="step">
+          <h3>Parta zapíše</h3>
+          <p>Co se dělalo, kdo byl na place, kolik materiálu ušlo. Opakované činnosti
+            se přidají klepnutím, včerejšek se dá zkopírovat.</p>
+        </div>
+        <div class="step">
+          <h3>Záznam se podá</h3>
+          <p>Tím se materiál odečte ze skladu a záznam se zamkne — už do něj nikdo
+            zpětně nesáhne.</p>
+        </div>
+        <div class="step">
+          <h3>Šéf podepíše</h3>
+          <p>Prstem, přímo v telefonu. Kdykoli pak vytiskneš deník za období
+            do PDF nebo Excelu i se souhrnem materiálu.</p>
         </div>
       </div>
     </div>
@@ -317,46 +386,44 @@
 
   <!-- FUNKCE -->
   <section id="funkce">
-    <div class="wrap rev">
+    <div class="w rev">
       <p class="eyebrow">Co to umí</p>
       <h2>Nástroj, ne další chat</h2>
-      <p class="lede">Šest věcí, které parta na stavbě opravdu potřebuje. Nic navíc.</p>
-
-      <div class="cards">
+      <div class="feats">
         <div class="feat">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="m9 9.5 2 2 4-4"/></svg></span>
           <h3>Stavební deník</h3>
-          <p>Co se dělalo, kdo byl na place, jaké počasí — doplní se samo podle polohy.
-            Fotky, podpis prstem, export do PDF i Excelu.</p>
+          <p>Činnosti, docházka, počasí podle polohy, fotky a podpis prstem.
+            Export do PDF i Excelu za vybrané období.</p>
         </div>
         <div class="feat">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg></span>
           <h3>Sklad materiálu</h3>
-          <p>Příjem a výdej na dvě klepnutí. Spotřeba z deníku se odečte sama a u každého
-            pohybu je vidět kdo, kdy a kolik.</p>
+          <p>Příjem a výdej na dvě klepnutí, upozornění „dochází“ dřív, než dojde.
+            U každého pohybu je kdo, kdy a kolik.</p>
         </div>
         <div class="feat">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></svg></span>
           <h3>Výkresy v kapse</h3>
-          <p>PDF plány s ostrým přiblížením i u velkých formátů. Kreslení do plánu,
-            značky prvků a úkol připnutý přesně na místo.</p>
+          <p>PDF plány s ostrým přiblížením i u velkých formátů, kreslení do plánu
+            a značky prvků, které posuneš prstem.</p>
         </div>
         <div class="feat">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m8 12 2.5 2.5L16 9"/></svg></span>
-          <h3>Úkoly</h3>
-          <p>Kdo co má udělat, do kdy a s jakou prioritou. S fotkou a s místem
-            ve výkresu, ať se nikdo neptá „kde přesně“.</p>
+          <h3>Úkoly na místě</h3>
+          <p>Úkol připnutý přesně tam, kde se má něco udělat — s fotkou, termínem
+            a jménem, ať se nikdo neptá „kde přesně“.</p>
         </div>
         <div class="feat">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
           <h3>Chat party</h3>
-          <p>Jedna nástěnka ke stavbě — ne deset skupin. Fotky a soubory u věci,
-            doručení okamžité.</p>
+          <p>Jedna nástěnka ke stavbě místo deseti skupin. Fotky i soubory
+            u věci a doručení okamžité.</p>
         </div>
         <div class="feat">
           <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></span>
           <h3>Lidé a role</h3>
-          <p>Parta zapisuje, šéf podepisuje. Účastníka bez účtu (brigádníka)
+          <p>Parta zapisuje, šéf podepisuje a spravuje. Brigádníka bez účtu
             přidáš jedním jménem.</p>
         </div>
       </div>
@@ -364,15 +431,15 @@
   </section>
 
   <!-- OFFLINE -->
-  <div class="band" id="offline">
+  <div class="band">
     <section>
-      <div class="wrap band-in rev">
-        <div class="band-big">0<span style="color:var(--dim)">/5</span></div>
+      <div class="w band-in rev">
+        <div class="band-n">0<span>/5</span></div>
         <div>
           <h2>Na stavbě signál nebývá.<br />Appce to nevadí.</h2>
-          <p class="lede" style="margin-bottom:0">Výdej materiálu, odbavený úkol i nový záznam deníku
-            se uloží do telefonu a odešlou samy, jakmile chytneš síť. Nahoře vidíš,
-            kolik akcí čeká — nic se neztratí a nic nemusíš psát dvakrát.</p>
+          <p class="lede" style="margin-bottom:0">Výdej materiálu, odbavený úkol i nový záznam
+            deníku se uloží do telefonu a odešlou samy, jakmile chytneš síť. Nahoře vidíš,
+            kolik akcí čeká — a když server něco odmítne, nezmizí to, ale počká na tebe.</p>
         </div>
       </div>
     </section>
@@ -380,32 +447,31 @@
 
   <!-- VÝKRESY -->
   <section id="vykresy">
-    <div class="wrap split rev">
+    <div class="w split rev">
       <div>
         <p class="eyebrow">Nejsilnější část</p>
         <h2>Přišla změna? Uvidíš ji na první pohled.</h2>
-        <p class="lede">Nahraješ novou revizi výkresu a appka přes plán položí vrstvu:
-          zeleně to, co přibylo, červeně to, co zmizelo. Konec luštění, co projektant změnil.</p>
-        <ul class="list-check">
+        <p class="lede">Nahraješ novou revizi a appka přes plán položí vrstvu: zeleně to,
+          co přibylo, červeně to, co zmizelo. Konec luštění, co projektant změnil.</p>
+        <ul class="ticks">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             <span><b>Porovnání revizí</b> — zelená přibylo, červená ubylo</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            <span><b>Najdi stejné symboly</b> — obtáhneš jednu zásuvku, appka najde všechny na listu</span></li>
+            <span><b>Najdi stejné symboly</b> — obtáhneš jednu zásuvku, appka najde všechny</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             <span><b>Značky prvků</b> — posuneš prstem, odbavíš jako hotové</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-            <span><b>Popisky z výkresu</b> — kódy prvků se naimportují jedním klepnutím</span></li>
+            <span><b>Popisky z výkresu</b> — kódy prvků naimportuješ jedním klepnutím</span></li>
         </ul>
       </div>
-
-      <div class="plan" role="img" aria-label="Ukázka porovnání dvou revizí výkresu">
+      <div class="plan" role="img" aria-label="Porovnání dvou revizí výkresu">
         <svg viewBox="0 0 400 300" aria-hidden="true">
-          <g stroke="var(--line)" stroke-width="1" opacity=".7">
+          <g stroke="var(--line)" stroke-width="1" opacity=".8">
             <path d="M20 20h360v260H20z" fill="none"/>
             <path d="M20 96h150M170 20v260M250 96h130M250 190h130" fill="none"/>
             <path d="M60 96v-30M100 280v-40" fill="none"/>
           </g>
-          <g stroke="var(--cyan)" stroke-width="1.6" fill="none" opacity=".85">
+          <g stroke="var(--cyan)" stroke-width="1.6" fill="none" opacity=".8">
             <path d="M40 130h110M40 160h110M40 190h80"/>
             <circle cx="150" cy="130" r="5"/><circle cx="150" cy="160" r="5"/>
           </g>
@@ -413,43 +479,86 @@
             <path d="M270 120h90M270 145h90"/>
             <circle cx="300" cy="230" r="8"/><circle cx="340" cy="230" r="8"/>
           </g>
-          <g stroke="#ff453a" stroke-width="2.6" fill="none" opacity=".95">
+          <g stroke="#ff453a" stroke-width="2.6" fill="none">
             <path d="M60 235h70"/><circle cx="150" cy="190" r="6"/>
           </g>
           <g font-family="ui-monospace,monospace" font-size="9" fill="var(--dim)">
-            <text x="272" y="112">05.03-18</text>
-            <text x="42" y="122">04.02-11</text>
+            <text x="272" y="112">05.03-18</text><text x="42" y="122">04.02-11</text>
           </g>
         </svg>
-        <div class="legend"><span><i style="background:#2bd94a"></i>přibylo</span><span><i style="background:#ff453a"></i>ubylo</span></div>
+        <div class="lgd"><span><i style="background:#2bd94a"></i>přibylo</span><span><i style="background:#ff453a"></i>ubylo</span></div>
       </div>
     </div>
   </section>
 
-  <div class="wrap"><div class="rule"></div></div>
-
-  <!-- DŮVĚRA -->
-  <section>
-    <div class="wrap rev">
-      <p class="eyebrow">Vaše data</p>
-      <h2>Každá parta vidí jen svoje stavby</h2>
-      <p class="lede">Přístup se hlídá přímo v databázi, ne jen v appce — kdo nebyl na stavbu pozvaný,
-        nedostane se k ní. Přenos je šifrovaný, podepsané záznamy už nikdo nepřepíše
-        a každý pohyb skladu má svého autora a čas.</p>
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="w rev">
+      <p class="eyebrow">Otázky a odpovědi</p>
+      <h2>Na co se ptají nejčastěji</h2>
+      <div class="faq">
+        <details open>
+          <summary>Kolik to stojí?</summary>
+          <p>Teď nic. Appku ladíme v ostrém provozu a party, které nám pomáhají ji
+            vychytat, ji mají zdarma. Až přijde placená verze, řekneme to dopředu —
+            nikoho nepřekvapíme účtem ani vypnutou appkou.</p>
+        </details>
+        <details>
+          <summary>Musí to umět celá parta?</summary>
+          <p>Kdo umí napsat zprávu, zvládne zápis do deníku. Nastavení, role a podpisy
+            řeší jen vedoucí. Nový člověk se přidá pozvánkou na e-mail a brigádníka
+            bez telefonu přidáš jedním jménem.</p>
+        </details>
+        <details>
+          <summary>Co když na stavbě není signál?</summary>
+          <p>Zapisuje se dál. Výdej materiálu, odbavený úkol i nový záznam se uloží
+            do telefonu a odešlou se samy, jakmile chytneš síť. Nic nemusíš psát dvakrát
+            a nic se cestou neztratí.</p>
+        </details>
+        <details>
+          <summary>Kdo vidí naše data?</summary>
+          <p>Jen lidé pozvaní na konkrétní stavbu. Omezení je vynucené přímo v databázi,
+            ne jen v aplikaci — kdo na stavbu nepatří, nedostane se k ní ani oklikou.
+            Přenos je šifrovaný a podepsané záznamy už nikdo nepřepíše.</p>
+        </details>
+        <details>
+          <summary>Můžu deník doložit investorovi?</summary>
+          <p>Ano. Export do PDF i Excelu za libovolné období — s hlavičkou firmy včetně
+            IČO, s tím, kdo a kdy záznam podepsal, a se souhrnem spotřebovaného
+            materiálu. Dá se vyvézt třeba jen květen kvůli fakturaci.</p>
+        </details>
+        <details>
+          <summary>Zvládne to velké výkresy?</summary>
+          <p>Ano, i formáty A1 a A0. Plán se při přiblížení doostřuje, takže popisky
+            zůstanou čitelné. Do výkresu se dá kreslit, připínat úkoly na místo
+            a značit prvky.</p>
+        </details>
+        <details>
+          <summary>Co když někdo přijde o telefon?</summary>
+          <p>Data nejsou v telefonu, ale v zabezpečeném úložišti. Přihlásí se na jiném
+            zařízení a má všechno. V telefonu čekají jen akce zapsané bez signálu,
+            dokud se neodešlou.</p>
+        </details>
+        <details>
+          <summary>A když se rozhodneme přestat?</summary>
+          <p>Deník i data si kdykoli vyvezete do PDF, Excelu nebo zálohy. Účet jde smazat
+            přímo v aplikaci. Žádná smlouva, žádné držení dat jako rukojmí.</p>
+        </details>
+      </div>
     </div>
   </section>
 
-  <!-- VÝZVA -->
+  <!-- CTA -->
   <section id="zkusit">
-    <div class="wrap">
+    <div class="w">
       <div class="final rev">
         <p class="eyebrow" style="justify-content:center">Vyzkoušet</p>
         <h2>Chcete to na svojí stavbě?</h2>
-        <p class="lede">Aplikaci dokončujeme pro vydání v App Storu. Napište a pustíme vás
-          do testování — postavíme vám první stavbu a ukážeme, jak to celé chodí.</p>
-        <div class="cta-row">
-          <a class="btn btn-primary" href="mailto:vasyashobey80@gmail.com?subject=VSH%20Elektro%20%E2%80%94%20chci%20vyzkou%C5%A1et&amp;body=Dobr%C3%BD%20den%2C%0A%0Am%C3%A1me%20partu%20o%20...%20lidech%20a%20d%C4%9Bl%C3%A1me%20...%0AR%C3%A1d%20bych%20aplikaci%20vyzkou%C5%A1el.%0A%0AKontakt%3A%20">Napsat e-mail</a>
-          <a class="btn btn-ghost" href="https://vasyashobey80-cloud.github.io/vsh-elektro-privacy/">Ochrana údajů</a>
+        <p class="lede">Napište a pustíme vás do testování. Založíme vám první stavbu,
+          nahrajeme výkresy a ukážeme, jak to celé chodí — ať to nemusíte luštit sami.</p>
+        <div class="cta">
+          <a class="btn btn-1" href="mailto:vasyashobey80@gmail.com?subject=VSH%20Elektro%20%E2%80%94%20chci%20vyzkou%C5%A1et&amp;body=Dobr%C3%BD%20den%2C%0A%0Am%C3%A1me%20partu%20o%20...%20lidech%20a%20d%C4%9Bl%C3%A1me%20...%0AR%C3%A1d%20bych%20aplikaci%20vyzkou%C5%A1el.%0A%0AKontakt%3A%20">Napsat e-mail</a>
+          <a class="btn btn-2" href="https://vasyashobey80-cloud.github.io/vsh-elektro-privacy/">Ochrana údajů</a>
         </div>
         <p class="note">Odpovídáme obvykle do druhého dne.</p>
       </div>
@@ -458,12 +567,10 @@
 </main>
 
 <footer>
-  <div class="wrap f-in">
+  <div class="w f-in">
     <span>VSH Elektro · nástroj pro party na stavbě</span>
-    <span>
-      <a href="mailto:vasyashobey80@gmail.com">vasyashobey80@gmail.com</a> ·
-      <a href="https://vasyashobey80-cloud.github.io/vsh-elektro-privacy/">Zásady ochrany osobních údajů</a>
-    </span>
+    <span><a href="mailto:vasyashobey80@gmail.com">vasyashobey80@gmail.com</a> ·
+      <a href="https://vasyashobey80-cloud.github.io/vsh-elektro-privacy/">Zásady ochrany osobních údajů</a></span>
   </div>
 </footer>
 
@@ -474,9 +581,9 @@
       Array.prototype.forEach.call(els, function (e) { e.classList.add("in"); });
       return;
     }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+    var io = new IntersectionObserver(function (en) {
+      en.forEach(function (x) {
+        if (x.isIntersecting) { x.target.classList.add("in"); io.unobserve(x.target); }
       });
     }, { rootMargin: "0px 0px -8% 0px", threshold: .1 });
     Array.prototype.forEach.call(els, function (e) { io.observe(e); });
