@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Prohlídka aplikace — VSH Elektro</title>
+<meta name="description" content="Jak VSH Elektro vypadá obrazovku po obrazovce: deník, sklad, výkresy se značkami, úkoly a chat party." />
+<meta name="theme-color" content="#0e1014" />
+<link rel="stylesheet" href="assets/style.css" />
+<style>
+  .tour{ display:grid; grid-template-columns:.95fr 1.05fr; gap:clamp(26px,5vw,60px);
+    align-items:center; padding:clamp(38px,6vw,74px) 0; }
+  .tour:nth-child(even) > .tour-txt{ order:2; }
+  @media (max-width:880px){
+    .tour{ grid-template-columns:1fr; }
+    .tour:nth-child(even) > .tour-txt{ order:0; }
+  }
+  .tour + .tour{ border-top:1px solid var(--line); }
+  .tour-txt .ticks{ margin-top:16px; }
+  .tour-txt .ticks li{ font-size:14.5px; margin-bottom:9px; }
+  .mini{ font-family:var(--mono); font-size:10.5px; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--amber); font-weight:600; margin:0 0 10px; }
+  /* sklad */
+  .r{ display:flex; align-items:center; gap:10px; padding:10px 11px; background:#1b1e25;
+    border:1px solid #262b34; border-radius:12px; }
+  .r-bar{ width:3px; align-self:stretch; border-radius:2px; background:#3a3f4a; }
+  .r-m{ flex:1; min-width:0; }
+  .r-n{ font-size:11.5px; font-weight:700; }
+  .r-u{ font-size:8.5px; color:#75757c; font-family:var(--mono); margin-top:1px; }
+  .r-q{ font-family:var(--mono); font-size:12px; font-weight:700; }
+  .r-q small{ font-size:8px; color:#75757c; }
+  .r.out .r-bar{ background:#ff5a4f; } .r.out .r-u{ color:#ff5a4f; }
+  .r.low .r-bar{ background:#f8b226; } .r.low .r-u{ color:#f8b226; }
+  .srch{ background:#1b1e25; border:1px solid #262b34; border-radius:12px;
+    padding:9px 11px; font-size:10.5px; color:#5d5f68; }
+  /* výkres */
+  .pv{ position:relative; flex:1; background:#12141a; border-radius:12px; overflow:hidden; }
+  .pv svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .mk{ position:absolute; width:15px; height:15px; border-radius:50%; transform:translate(-50%,-50%);
+    border:1.4px solid rgba(255,255,255,.9); box-shadow:0 1px 3px rgba(0,0,0,.5);
+    font-size:8px; font-weight:800; color:#15171c; display:flex; align-items:center; justify-content:center; }
+  .pv-tb{ position:absolute; right:7px; bottom:7px; display:flex; flex-direction:column; gap:5px; }
+  .pv-tb i{ width:24px; height:24px; border-radius:50%; background:#1b1e25;
+    border:1px solid #2c313b; display:block; }
+  .pv-tb i.on{ background:#f8b226; border-color:transparent; }
+  /* úkoly */
+  .t{ display:flex; gap:9px; align-items:flex-start; background:#1b1e25; border:1px solid #262b34;
+    border-radius:12px; padding:10px 11px; }
+  .t-ch{ width:16px; height:16px; border-radius:5px; border:1.6px solid #3a3f4a; flex:0 0 auto; margin-top:1px; }
+  .t.done .t-ch{ background:#3ddc6b; border-color:transparent; }
+  .t-t{ font-size:11px; font-weight:700; }
+  .t.done .t-t{ color:#75757c; text-decoration:line-through; }
+  .t-s{ font-size:8.5px; color:#75757c; margin-top:2px; font-family:var(--mono); }
+  .t-p{ font-size:7px; font-family:var(--mono); letter-spacing:.1em; text-transform:uppercase;
+    padding:2px 7px; border-radius:99px; border:1px solid #3a3f4a; color:#9096a2; align-self:center; }
+  .t-p.hi{ color:#ff5a4f; border-color:rgba(255,90,79,.5); }
+  /* chat */
+  .ch{ max-width:78%; padding:7px 10px; border-radius:14px; font-size:10.5px; }
+  .ch.them{ align-self:flex-start; background:#1b1e25; border-bottom-left-radius:5px; }
+  .ch.me{ align-self:flex-end; background:linear-gradient(140deg,#ffcf57,#f2a516); color:#1a1205;
+    border-bottom-right-radius:5px; }
+  .ch-w{ font-size:8px; font-weight:800; color:#f8b226; margin-bottom:2px; }
+  .ch-f{ display:flex; align-items:center; gap:7px; padding:8px 10px; border-radius:10px;
+    background:rgba(0,0,0,.18); font-size:9.5px; font-weight:700; margin-bottom:3px; }
+  .s-flex{ display:flex; flex-direction:column; gap:7px; }
+</style>
+</head>
+<body>
+<div class="gridbg" aria-hidden="true"></div>
+
+<header>
+  <div class="w bar">
+    <a class="logo" href="index.html">
+      <span class="logo-i"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+      <span><span class="logo-n">VSH Elektro</span><br /><span class="logo-s">Stavba v telefonu</span></span>
+    </a>
+    <nav>
+      <a href="index.html">Úvod</a>
+      <a href="doklad.html">Deník jako doklad</a>
+      <a href="index.html#faq">Otázky</a>
+      <a href="index.html#zkusit">Vyzkoušet</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="w" style="padding-top:clamp(24px,4vw,44px)">
+    <p class="eyebrow">Prohlídka</p>
+    <h1 style="font-size:clamp(32px,5.4vw,52px)">Takhle to vypadá v ruce</h1>
+    <p class="lede">Pět obrazovek, na kterých parta stráví celý den. Žádné menu do hloubky,
+      žádné nastavování před prací.</p>
+  </div>
+
+  <div class="w">
+
+    <!-- DENÍK -->
+    <div class="tour rev">
+      <div class="tour-txt">
+        <p class="mini">01 · Deník</p>
+        <h2>Den zapíšeš, než sbalíš nářadí</h2>
+        <p class="lede" style="margin-bottom:0">Datum, čas a parta jsou předvyplněné.
+          Činnosti přidáš klepnutím na svoje šablony, materiál vybereš z oblíbených.
+          Počasí si appka doplní sama podle místa.</p>
+        <ul class="ticks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b>Kopírovat</b> — včerejšek jako základ dneška</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Stavy <b>Černovík → Čeká podpisu → Podepsáno</b></span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Fotky rovnou z fotoaparátu</span></li>
+        </ul>
+      </div>
+      <div class="phone" role="img" aria-label="Obrazovka stavebního deníku">
+        <div class="scr">
+          <div class="s-top"><div class="s-obj">Akademie věd ⌄</div><div class="s-h">Stavební deník</div></div>
+          <div class="s-body">
+            <div class="k">
+              <div class="k-top"><div><div class="k-d">Čt 30. 7.</div><div class="k-t">07:00 — 18:00</div></div>
+                <span class="pill ok">Podepsáno</span></div>
+              <div class="k-li"><i></i>Natažení kabelů v 2.NP</div>
+              <div class="k-li"><i></i>Montáž datových zásuvek</div>
+              <div class="k-wx">☀ 24 °C, skoro jasno · 2.NP–4.NP</div>
+              <div class="avs"><span class="av on">VS</span><span class="av">VD</span><span class="av">RO</span></div>
+              <div class="mats"><span class="mt">Kabel F/UTP 6A <b>−90 m</b></span>
+                <span class="mt">Chránička DN25 <b>−20 m</b></span></div>
+            </div>
+            <div class="k">
+              <div class="k-top"><div><div class="k-d">St 29. 7.</div><div class="k-t">07:00 — 16:30</div></div>
+                <span class="pill">Čeká podpisu</span></div>
+              <div class="k-li"><i></i>Drážkování — 25 m</div>
+              <div class="avs"><span class="av on">VS</span><span class="av">IV</span></div>
+            </div>
+          </div>
+          <div class="s-tabs"><span class="tb on"><i></i>Deník</span><span class="tb"><i></i>Sklad</span>
+            <span class="tb"><i></i>Úkoly</span><span class="tb"><i></i>Výkresy</span><span class="tb"><i></i>Lidé</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKLAD -->
+    <div class="tour rev">
+      <div class="tour-txt">
+        <p class="mini">02 · Sklad</p>
+        <h2>Sklad, který se dopočítá sám</h2>
+        <p class="lede" style="margin-bottom:0">Materiál z deníku se odečte ve chvíli, kdy se
+          záznam podá — nemusíš nic odepisovat dvakrát. Ruční příjem a výdej jsou na dvě klepnutí
+          a u každého pohybu zůstane kdo, kdy a kolik.</p>
+        <ul class="ticks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Upozornění <b>„dochází“</b> dřív, než dojde</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Do minusu se sklad nedostane</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Historie pohybů, do které nikdo zpětně nesáhne</span></li>
+        </ul>
+      </div>
+      <div class="phone" role="img" aria-label="Obrazovka skladu materiálu">
+        <div class="scr">
+          <div class="s-top"><div class="s-obj">Akademie věd ⌄</div><div class="s-h">Sklad</div></div>
+          <div class="s-body s-flex">
+            <div class="srch">Hledat materiál…</div>
+            <div class="r"><span class="r-bar"></span><span class="r-m"><span class="r-n">Kabel F/UTP 6A</span><span class="r-u">m</span></span><span class="r-q">1 240 <small>m</small></span></div>
+            <div class="r low"><span class="r-bar"></span><span class="r-m"><span class="r-n">Chránička DN25</span><span class="r-u">Dochází</span></span><span class="r-q">35 <small>m</small></span></div>
+            <div class="r"><span class="r-bar"></span><span class="r-m"><span class="r-n">Chránička DN40</span><span class="r-u">m</span></span><span class="r-q">180 <small>m</small></span></div>
+            <div class="r out"><span class="r-bar"></span><span class="r-m"><span class="r-n">Ku68 pod omítku</span><span class="r-u">Došlo</span></span><span class="r-q">0 <small>ks</small></span></div>
+            <div class="r"><span class="r-bar"></span><span class="r-m"><span class="r-n">Datové zásuvky</span><span class="r-u">ks</span></span><span class="r-q">24 <small>ks</small></span></div>
+          </div>
+          <div class="s-tabs"><span class="tb"><i></i>Deník</span><span class="tb on"><i></i>Sklad</span>
+            <span class="tb"><i></i>Úkoly</span><span class="tb"><i></i>Výkresy</span><span class="tb"><i></i>Lidé</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VÝKRESY -->
+    <div class="tour rev">
+      <div class="tour-txt">
+        <p class="mini">03 · Výkresy</p>
+        <h2>Plán přes celou obrazovku</h2>
+        <p class="lede" style="margin-bottom:0">PDF výkres se při přiblížení doostřuje, takže
+          popisky zůstanou čitelné i u formátu A0. Do plánu se dá kreslit, připínat úkoly na
+          konkrétní místo a značit prvky, které pak posuneš prstem.</p>
+        <ul class="ticks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b>Porovnání revizí</b> — co přibylo a co zmizelo</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span><b>Najdi stejné symboly</b> na celém listu</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Značky vidí celá parta živě</span></li>
+        </ul>
+      </div>
+      <div class="phone" role="img" aria-label="Prohlížeč výkresu se značkami prvků">
+        <div class="scr">
+          <div class="s-top" style="padding-bottom:8px"><div class="s-h" style="font-size:13px">SLB 2NP.pdf</div></div>
+          <div class="s-body" style="padding:0 8px 8px">
+            <div class="pv">
+              <svg viewBox="0 0 200 320" aria-hidden="true">
+                <g stroke="#4a4f5a" stroke-width="1.2" fill="none">
+                  <path d="M18 20h164v280H18z"/><path d="M18 118h96M114 20v280M114 200h68"/>
+                  <path d="M60 118v-34M150 300v-42"/>
+                </g>
+                <g stroke="#3aa0ff" stroke-width="1" fill="none" opacity=".65">
+                  <path d="M30 150h74M30 176h74M30 202h50"/>
+                </g>
+                <g stroke="#c162d6" stroke-width="1" fill="none" opacity=".55">
+                  <path d="M126 60h44M126 86h44"/>
+                </g>
+              </svg>
+              <span class="mk" style="left:26%;top:20%;background:#f8b226">Z</span>
+              <span class="mk" style="left:52%;top:27%;background:#f8b226">Z</span>
+              <span class="mk" style="left:74%;top:22%;background:#3aa0ff">V</span>
+              <span class="mk" style="left:33%;top:49%;background:#f8b226">Z</span>
+              <span class="mk" style="left:62%;top:57%;background:#3ddc6b">D</span>
+              <span class="mk" style="left:44%;top:72%;background:#ff5a4f">R</span>
+              <span class="mk" style="left:78%;top:78%;background:#ffe066">S</span>
+              <span class="pv-tb"><i></i><i class="on"></i><i></i><i></i></span>
+            </div>
+          </div>
+          <div class="s-tabs"><span class="tb"><i></i>Deník</span><span class="tb"><i></i>Sklad</span>
+            <span class="tb"><i></i>Úkoly</span><span class="tb on"><i></i>Výkresy</span><span class="tb"><i></i>Lidé</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÚKOLY -->
+    <div class="tour rev">
+      <div class="tour-txt">
+        <p class="mini">04 · Úkoly</p>
+        <h2>Kdo, co a do kdy</h2>
+        <p class="lede" style="margin-bottom:0">Úkol má jméno, termín a prioritu — a když ho
+          založíš klepnutím do výkresu, ví se i <em>kde přesně</em>. Hotové se dají skrýt,
+          ať v seznamu zůstane jen to, co čeká.</p>
+        <ul class="ticks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Odbavíš jedním klepnutím i bez signálu</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Fotka závady přímo u úkolu</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Po termínu se úkol sám zvýrazní</span></li>
+        </ul>
+      </div>
+      <div class="phone" role="img" aria-label="Obrazovka úkolů">
+        <div class="scr">
+          <div class="s-top"><div class="s-obj">Akademie věd ⌄</div><div class="s-h">Úkoly</div></div>
+          <div class="s-body s-flex">
+            <div class="t"><span class="t-ch"></span><span class="r-m"><span class="t-t">Dodělat zásuvky v A2.15</span><span class="t-s">Viktor D. · do 5. 8.</span></span><span class="t-p hi">Vysoká</span></div>
+            <div class="t"><span class="t-ch"></span><span class="r-m"><span class="t-t">Přeměřit linku PZTS č. 9</span><span class="t-s">Rustam O. · do 6. 8.</span></span><span class="t-p">Běžná</span></div>
+            <div class="t"><span class="t-ch"></span><span class="r-m"><span class="t-t">Krabičky pro moduly 4.NP</span><span class="t-s">z výkresu · 05.03-18</span></span><span class="t-p">Běžná</span></div>
+            <div class="t done"><span class="t-ch"></span><span class="r-m"><span class="t-t">Rozvaděč ve dvoře — osadit</span><span class="t-s">hotovo 1. 8.</span></span></div>
+          </div>
+          <div class="s-tabs"><span class="tb"><i></i>Deník</span><span class="tb"><i></i>Sklad</span>
+            <span class="tb on"><i></i>Úkoly</span><span class="tb"><i></i>Výkresy</span><span class="tb"><i></i>Lidé</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="tour rev">
+      <div class="tour-txt">
+        <p class="mini">05 · Chat party</p>
+        <h2>Jedna nástěnka místo deseti skupin</h2>
+        <p class="lede" style="margin-bottom:0">Zprávy patří ke stavbě, ne do soukromého
+          WhatsAppu. Fotky a soubory se otevřou rovnou v appce — výkres poslaný v chatu
+          si přiblížíš stejně jako plán.</p>
+        <ul class="ticks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Doručení okamžité, i když appka běží na pozadí</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Nový člověk v partě vidí historii stavby</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span>Jméno u zprávy nejde podvrhnout</span></li>
+        </ul>
+      </div>
+      <div class="phone" role="img" aria-label="Obrazovka chatu party">
+        <div class="scr">
+          <div class="s-top"><div class="s-h">Chat</div></div>
+          <div class="s-body s-flex" style="justify-content:flex-end;padding-bottom:10px">
+            <div class="ch them"><div class="ch-w">Viktor Deda</div>Kluci, ve 4.NP chybí krabičky, dovezu ráno.</div>
+            <div class="ch me">Dobře, zítra to dotáhneme.</div>
+            <div class="ch me"><div class="ch-f">📄 SLB 2NP rev.B.pdf</div>Nová revize od projektanta</div>
+            <div class="ch them"><div class="ch-w">Rustam Obidov</div>Vidím rozdíl u schodiště, projedu to.</div>
+          </div>
+          <div class="s-tabs"><span class="tb"><i></i>Deník</span><span class="tb"><i></i>Sklad</span>
+            <span class="tb"><i></i>Úkoly</span><span class="tb"><i></i>Výkresy</span><span class="tb"><i></i>Lidé</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="w">
+      <div class="final rev">
+        <h2>Chcete to vidět na svých výkresech?</h2>
+        <p class="lede">Založíme vám stavbu, nahrajeme plány a projdeme to s vámi.</p>
+        <div class="cta">
+          <a class="btn btn-1" href="mailto:vasyashobey80@gmail.com?subject=VSH%20Elektro%20%E2%80%94%20chci%20vyzkou%C5%A1et">Napsat e-mail</a>
+          <a class="btn btn-2" href="doklad.html">Jak vypadá výstup</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="w f-in">
+    <span>VSH Elektro · nástroj pro party na stavbě</span>
+    <span><a href="index.html">Úvod</a> · <a href="doklad.html">Deník jako doklad</a> ·
+      <a href="https://vasyashobey80-cloud.github.io/vsh-elektro-privacy/">Ochrana údajů</a></span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var els = document.querySelectorAll(".rev");
+    if (!("IntersectionObserver" in window)) {
+      Array.prototype.forEach.call(els, function (e) { e.classList.add("in"); }); return;
+    }
+    var io = new IntersectionObserver(function (en) {
+      en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add("in"); io.unobserve(x.target); } });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: .08 });
+    Array.prototype.forEach.call(els, function (e) { io.observe(e); });
+  })();
+</script>
+</body>
+</html>

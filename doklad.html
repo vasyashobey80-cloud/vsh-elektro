@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Deník jako doklad — VSH Elektro</title>
+<meta name="description" content="Jak vypadá stavební deník vyvezený z aplikace: hlavička firmy s IČO, kdo a kdy podepsal, souhrn spotřebovaného materiálu. PDF i Excel za vybrané období." />
+<meta name="theme-color" content="#0e1014" />
+<link rel="stylesheet" href="assets/style.css" />
+<style>
+  .doc-wrap{ display:grid; grid-template-columns:1fr 1.05fr; gap:clamp(26px,5vw,58px);
+    align-items:start; padding:clamp(30px,5vw,58px) 0; }
+  @media (max-width:900px){ .doc-wrap{ grid-template-columns:1fr; } }
+  /* list papíru */
+  .sheet{ background:#fff; color:#111; border-radius:8px; padding:26px 24px;
+    box-shadow:0 26px 60px rgba(0,0,0,.42); font-size:10px; line-height:1.45;
+    position:sticky; top:22px; }
+  @media (max-width:900px){ .sheet{ position:static; } }
+  .sh-co{ font-size:11px; font-weight:800; }
+  .sh-co small{ display:block; font-weight:400; color:#444; font-size:9px; margin-top:1px; }
+  .sh-h1{ font-size:19px; font-weight:800; margin:14px 0 3px; letter-spacing:-.02em; }
+  .sh-ob{ font-size:11px; font-weight:700; }
+  .sh-meta{ color:#777; font-size:9px; margin:2px 0 12px; }
+  table{ width:100%; border-collapse:collapse; }
+  th,td{ border:1px solid #bbb; padding:4px 5px; text-align:left; vertical-align:top; font-size:8.4px; }
+  th{ background:#f2f2f2; font-weight:700; }
+  .nw{ white-space:nowrap; }
+  .dim{ color:#777; }
+  .sh-h2{ font-size:11px; font-weight:800; margin:16px 0 6px; }
+  table.sum{ width:74%; }
+  table.sum td:last-child{ text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .sh-foot{ margin-top:14px; border-top:1px solid #ccc; padding-top:6px; color:#777; font-size:8px; }
+  /* anotace */
+  .ann{ list-style:none; padding:0; margin:22px 0 0; counter-reset:a; }
+  .ann li{ display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start;
+    padding:15px 0; border-top:1px solid var(--line); }
+  .ann li::before{ counter-increment:a; content:counter(a); font-family:var(--mono);
+    font-size:11px; font-weight:700; color:var(--amber); padding-top:3px; }
+  .ann b{ display:block; font-size:15.5px; letter-spacing:-.012em; margin-bottom:3px; }
+  .ann span{ color:var(--mut); font-size:14.5px; }
+  .opts{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:13px; margin-top:30px; }
+  .opt{ background:var(--panel); border:1px solid var(--line); border-radius:15px; padding:19px 18px; }
+  .opt b{ display:block; font-size:15px; margin-bottom:5px; }
+  .opt span{ color:var(--mut); font-size:14px; }
+</style>
+</head>
+<body>
+<div class="gridbg" aria-hidden="true"></div>
+
+<header>
+  <div class="w bar">
+    <a class="logo" href="index.html">
+      <span class="logo-i"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+      <span><span class="logo-n">VSH Elektro</span><br /><span class="logo-s">Stavba v telefonu</span></span>
+    </a>
+    <nav>
+      <a href="index.html">Úvod</a>
+      <a href="prohlidka.html">Prohlídka</a>
+      <a href="index.html#faq">Otázky</a>
+      <a href="index.html#zkusit">Vyzkoušet</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="w" style="padding-top:clamp(24px,4vw,44px)">
+    <p class="eyebrow">Výstup</p>
+    <h1 style="font-size:clamp(32px,5.4vw,52px)">Deník, který obstojí u investora</h1>
+    <p class="lede">Zápisky v telefonu jsou k ničemu, pokud je nejde doložit. Tohle vypadne
+      z aplikace jedním klepnutím — bez přepisování, bez Wordu.</p>
+  </div>
+
+  <div class="w doc-wrap">
+    <!-- ukázka listu -->
+    <div class="sheet rev" role="img" aria-label="Ukázka vyvezeného stavebního deníku">
+      <div class="sh-co">VSH Elektro s.r.o.
+        <small>IČO 83476537 · DIČ CZ38564736 · +420 724 356 726</small></div>
+      <div class="sh-h1">Stavební deník</div>
+      <div class="sh-ob">Akademie věd — Hybernská 1000/8</div>
+      <div class="sh-meta">Období 01.07.2026 – 31.07.2026 · 14 záznamů · vytištěno 03.08.2026</div>
+
+      <table>
+        <thead><tr>
+          <th class="nw">Datum</th><th class="nw">Čas</th><th>Co se dělalo</th>
+          <th>Místo</th><th>Kdo pracoval</th><th>Materiál</th><th>Podpis</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="nw">30.07.2026</td><td class="nw">07:00–18:00</td>
+            <td>Vyvázání kabelů 2.NP<br />Montáž datových zásuvek 6.NP</td>
+            <td>2NP+4NP+6NP</td><td>Vasyl Shobei, Viktor Deda, Rustam Obidov</td>
+            <td>Chránička DN25 −20 M, Kabel F/UTP 6A −90 M</td>
+            <td class="nw">Podepsal<br />Vasyl Shobei<br /><span class="dim">31.07.2026</span></td>
+          </tr>
+          <tr>
+            <td class="nw">24.07.2026</td><td class="nw">07:00–18:00</td>
+            <td>Montáž rozvaděčů ve dvoře<br />Natažení chrániček</td>
+            <td>2NP - A</td><td>Vasyl Shobei, Viktor Deda</td>
+            <td>Kabel F/UTP 6A −300 M, Chránička DN32 −25 M</td>
+            <td class="nw">Podepsal<br />Vasyl Shobei<br /><span class="dim">25.07.2026</span></td>
+          </tr>
+          <tr>
+            <td class="nw">11.07.2026</td><td class="nw">07:00–18:00</td>
+            <td>Tahání kabelů<br />Drážkování — 20 m</td>
+            <td>2NP - A</td><td>Vasyl Shobei, Petro Cherneha, Vasyl Tymchuk</td>
+            <td>Chránička DN16 −45 M, Kabel U/UTP −225 M</td>
+            <td class="nw">Podepsal<br />Vasyl Shobei<br /><span class="dim">11.07.2026</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sh-h2">Spotřebovaný materiál celkem</div>
+      <table class="sum"><tbody>
+        <tr><td>Kabel F/UTP 6A</td><td>8 440 m</td></tr>
+        <tr><td>Chránička DN40</td><td>530 m</td></tr>
+        <tr><td>Chránička DN25</td><td>315 m</td></tr>
+        <tr><td>Ku68 pod omítku</td><td>45 ks</td></tr>
+      </tbody></table>
+      <div class="sh-foot">Vygenerováno aplikací VSH Elektro.</div>
+    </div>
+
+    <!-- anotace -->
+    <div class="rev">
+      <p class="eyebrow">Co v tom je</p>
+      <h2>Doklad, ne výpis z telefonu</h2>
+      <ol class="ann">
+        <li><span><b>Hlavička vaší firmy</b><span>Název, IČO, DIČ a kontakt vyplníte jednou
+          v nastavení a jsou na každém exportu.</span></span></li>
+        <li><span><b>Období a počet záznamů</b><span>Hned je vidět, za co doklad mluví —
+          třeba jen květen kvůli fakturaci.</span></span></li>
+        <li><span><b>Kdo a kdy podepsal</b><span>Ne jen „podepsáno“. U záznamu je jméno
+          vedoucího a datum podpisu; podepsaný záznam už nikdo nepřepíše.</span></span></li>
+        <li><span><b>Materiál u každého dne</b><span>Kolik čeho ten den ušlo — stejná čísla,
+          o která se odečetl sklad.</span></span></li>
+        <li><span><b>Souhrn za celé období</b><span>Podklad k faktuře na konci dokladu.
+          Žádné sčítání dvaceti řádků v hlavě.</span></span></li>
+      </ol>
+    </div>
+  </div>
+
+  <section>
+    <div class="w rev">
+      <p class="eyebrow">Jak si to vyvezete</p>
+      <h2>Vy určíte co, jak a za kdy</h2>
+      <div class="opts">
+        <div class="opt"><b>Období</b><span>Vše, tento měsíc, minulý měsíc — nebo vlastní
+          rozsah od–do.</span></div>
+        <div class="opt"><b>Jen podepsané</b><span>Rozdělané černovíky se do dokladu
+          pro investora nedostanou.</span></div>
+        <div class="opt"><b>PDF</b><span>Hotový doklad k tisku nebo do mailu, rovnou
+          přes Sdílet.</span></div>
+        <div class="opt"><b>Excel</b><span>Když si čísla chcete přebrat po svém
+          nebo je nahrát do účetnictví.</span></div>
+      </div>
+      <p class="note" style="margin-top:24px">Ukázka výše vychází z reálného deníku ze stavby
+        Akademie věd v Praze — jen zkrácená na tři řádky, aby se vešla na obrazovku.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="w">
+      <div class="final rev">
+        <h2>Chcete takový deník ze své stavby?</h2>
+        <p class="lede">Napište a pustíme vás do testování. Za týden budete mít první
+          doklad, který můžete poslat dál.</p>
+        <div class="cta">
+          <a class="btn btn-1" href="mailto:vasyashobey80@gmail.com?subject=VSH%20Elektro%20%E2%80%94%20chci%20vyzkou%C5%A1et">Napsat e-mail</a>
+          <a class="btn btn-2" href="prohlidka.html">Prohlídka aplikace</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="w f-in">
+    <span>VSH Elektro · nástroj pro party na stavbě</span>
+    <span><a href="index.html">Úvod</a> · <a href="prohlidka.html">Prohlídka</a> ·
+      <a href="https://vasyashobey80-cloud.github.io/vsh-elektro-privacy/">Ochrana údajů</a></span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var els = document.querySelectorAll(".rev");
+    if (!("IntersectionObserver" in window)) {
+      Array.prototype.forEach.call(els, function (e) { e.classList.add("in"); }); return;
+    }
+    var io = new IntersectionObserver(function (en) {
+      en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add("in"); io.unobserve(x.target); } });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: .08 });
+    Array.prototype.forEach.call(els, function (e) { io.observe(e); });
+  })();
+</script>
+</body>
+</html>
